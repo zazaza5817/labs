@@ -1,4 +1,4 @@
-from math import sqrt, sign, isclose
+from math import sqrt, isclose
 x1, y1 = map(int, input().split())
 x2, y2 = map(int, input().split())
 x3, y3 = map(int, input().split())
@@ -21,4 +21,5 @@ pr2 = (x2 - x0)*(y3 - y2)-(x3 - x2)*(y2 - y0)
 pr3 = (x3 - x0)*(y1 - y3)-(x1 - x3)*(y3 - y0)
 inTriangle = False
 if not (isclose(pr1, 0) or isclose(pr2, 0) or isclose(pr3, 0)):
-    if sign(pr1) == sign(pr2)
+    if sign(pr1) == sign(pr2) == sign(pr2):
+        print("in")
