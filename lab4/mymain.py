@@ -34,18 +34,15 @@ except ValueError:
 if not(4 <= serif_count <= 8):
     raise ValueError('Количество засечек должно быть от 4 до 8')
 
-# Расчет значений на засечках графика
-delta = (max_value - min_value) / (serif_count - 1)
-serif_values = []
-for i in range(serif_count):
-    serif_values.append(min_value + delta * i)
 
 # Вывод шапки графика
+delta = (max_value - min_value) / (serif_count - 1)
 title = "Построение графика"
 print(f"{title:=^{graph_length + 12}s}")
-symbols_per_serif = round(graph_length / len(serif_values))
+symbols_per_serif = round(graph_length / serif_count)
 print(f"          |", end="")
-for serif_value in serif_values:
+for i in range(serif_count):
+    serif_value = min_value + delta * i
     print(f"{serif_value:<{symbols_per_serif}.5g}", end="")
 print("|")
 
