@@ -14,7 +14,7 @@ def compare_by_eps(a, b):
 
 
 def h2(x):
-    y = x * log(x) - 52
+    y = sin(x)
     return y
 
 
@@ -23,8 +23,8 @@ def h1(x):
     return y
 
 
-a = 16
-b = 20
+a = -1
+b = 2
 step = 0.2
 
 # Вывод шапки таблицы
@@ -51,7 +51,6 @@ for i in range(serif_count):
 
 # Вывод шапки графика
 title = "Построение графика"
-print(values_count)
 print(f"{title:=^{graph_length + 12}s}")
 symbols_per_serif = round(graph_length / len(serif_values))
 print(f"          |", end="")
@@ -73,7 +72,7 @@ space_position = round(0 - min(h2_values) * scale_coefficient) + 1
 for x in range(a * 10, int((b + step) * 10), int(step * 10)):
     x = x / 10
     print(f"{x:<10.5g}|", end="")                                     # Вывод оси Х
-    h2 = x * log(x) - 52
+    h2 = sin(x)
     normalized_value = h2 - min(h2_values)                            # Нормализация значения в точке х для вывода
     dot_position = round(normalized_value * scale_coefficient) + 1    # Положение точки относительно левого края графика
     spaces_after = (graph_length - dot_position)                      # Количество пробелов после точки графика
