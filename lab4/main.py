@@ -1,17 +1,14 @@
 # Неделин Никита ИУ7-16Б
 # Программа для расчета таблицы значений функций и вывода графика одной из них
-from math import log, sin  # Подключение библиотеки
+from math import log  # Подключение библиотеки
 
-a = float(input("Введите начальное значение: "))               # Число с которого следует перебирать иксы
-b = float(input("Введите конечное значение: "))                # Число до которого следует перебирать иксы
-step = float(input("Введите значение шага: "))                 # Шаг с которым следует перебирать иксы
-# Коэффициент для вычисления дробных значений используя range()
-if step < 1:
-    range_coefficient = int(1/step)+1
-else:
-    range_coefficient = 1
-graph_length = 3*35+32                # Длина графика
-additional_if_const = 10              # Добавочное значение для графика если Y = const
+a = float(input("Введите начальное значение: "))       # Число с которого следует перебирать иксы
+b = float(input("Введите конечное значение: "))        # Число до которого следует перебирать иксы
+step = float(input("Введите значение шага: "))         # Шаг с которым следует перебирать иксы
+range_coefficient = 100000                               # Коэффициент для вычисления дробных значений используя range()
+graph_length = 3*35+32                                   # Длина графика
+additional_if_const = 10                                 # Добавочное значение для графика если Y = const
+
 
 # Вывод шапки таблицы
 print("-" * 61)
@@ -21,11 +18,14 @@ print("-" * 61)
 # Вывод самой таблицы и подсчет минимума и максимума выводимой в график функции
 min_value = float('+inf')
 max_value = float('-inf')
+dop_summ = 0
 for r in range(int(a * range_coefficient), int((b + step) * range_coefficient), int(step * range_coefficient)):
     r /= range_coefficient
     q1 = r ** 3 - 5.57 * (r ** 2) - 193 * r - 633.1
     q2 = r * log(r) - 52
     q3 = (q1 ** 3 - q2 ** 3) / 1000
+    if q2 > 0:
+        dop_summ += q2
     max_value = max(max_value, q3)
     min_value = min(min_value, q3)
     print(f'| {r:^12.5g} | {q1:^12.5g} | {q2:^12.5g} | {q3:^12.5g} |')
@@ -91,3 +91,4 @@ for r in range(int(a * range_coefficient), int((b + step) * range_coefficient), 
             print(" " * (dot_position - 1) + "*" + " " * spaces_after + "|")  # Вывод строчки
     else:
         print(" " * (dot_position - 1) + "*" + " " * spaces_after + "|")  # Вывод строчки без пересечения с Ох
+print(f"Дополнительное задание. Искомая сумма: {dop_summ:.5g}")  # Вывод дополнительного задания
