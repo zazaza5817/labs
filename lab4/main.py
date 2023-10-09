@@ -84,8 +84,12 @@ if not isclose(step, 0):
                 max_value = max_value + additional_if_const
                 scale_coefficient = (graph_length - 1) / (max_value - min_value)
 
+            mean_value = a + ((points_counter//2) * step)
+            q1 = mean_value ** 3 - 5.57 * (mean_value ** 2) - 193 * mean_value - 633.1
+            q2 = mean_value * log(mean_value) - 52
+            mean_y = (q1 ** 3 - q2 ** 3) / 1000
             # Нахождение y = 0 на графике
-            space_position = round((0 - min_value) * scale_coefficient) + 1
+            line_position = round((mean_y - min_value) * scale_coefficient) + 1
 
             # Вывод графика
             for r in range(int(a * range_coefficient), int(b * range_coefficient) + 1, int(step * range_coefficient)):
@@ -97,17 +101,20 @@ if not isclose(step, 0):
                 normalized_value = q3 - min_value                          # Нормализация значения в точке х для вывода
                 dot_position = round(normalized_value * scale_coefficient) + 1  # Положение точки с левого края графика
                 spaces_after = (graph_length - dot_position)                 # Количество пробелов после точки графика
-                if 0 < space_position < graph_length:                           # Проверка на пересечение графиком Ох
-                    if space_position < dot_position:
-                        print(" " * (space_position - 1) + "|" + " " * (dot_position - space_position - 1) +
-                              "*" + " " * spaces_after + "|")  # Вывод строчки
-                    elif space_position > dot_position:
-                        print(" " * (dot_position - 1) + "*" + " " * (space_position - dot_position - 1) + "|" +
-                              " " * (spaces_after - (space_position - dot_position)) + "|")  # Вывод строчки
+                spacer = " "
+                if isclose(r, mean_value):
+                    spacer = "-"
+                if 0 < line_position < graph_length:                           # Проверка на пересечение графиком Ох
+                    if line_position < dot_position:
+                        print(spacer * (line_position - 1) + "|" + spacer * (dot_position - line_position - 1) +
+                              "*" + spacer * spaces_after + "|")  # Вывод строчки
+                    elif line_position > dot_position:
+                        print(spacer * (dot_position - 1) + "*" + spacer * (line_position - dot_position - 1) + "|" +
+                              spacer * (spaces_after - (line_position - dot_position)) + "|")  # Вывод строчки
                     else:
-                        print(" " * (dot_position - 1) + "*" + " " * spaces_after + "|")  # Вывод строчки
+                        print(spacer * (dot_position - 1) + "*" + spacer * spaces_after + "|")  # Вывод строчки
                 else:
-                    print(" " * (dot_position - 1) + "*" + " " * spaces_after + "|")  # Вывод строчки без пересечения с Ох
+                    print(spacer * (dot_position - 1) + "*" + spacer * spaces_after + "|")  # Вывод строчки без пересечения с Ох
         print(f"Дополнительное задание. Искомая сумма: {dop_summ:.5g}")  # Вывод дополнительного задания
     else:
         print("Диапазон не имеет ни одной точки")
