@@ -1,17 +1,19 @@
-a = [1, 2, 3, 4, 5, 4, 3, 2, 1]
+a = list(map(int, input("Введите элементы списка через пробел").split()))
 k = int(input("Введите К: "))
 
 i = 1
-extr = []
+cnt = 0
 while i < len(a)-1:
     if a[i-1] > a[i] < a[i+1]:
-        extr.append(a[i])
+        cnt += 1
+        if cnt == k:
+            print(a[i])
+            break
     elif a[i-1] < a[i] > a[i+1]:
-        extr.append(a[i])
+        cnt += 1
+        if cnt == k:
+            print(a[i])
+            break
     i += 1
-if k > len(extr):
-    print("Не существует экстремума с таким номером")
-elif k < 1:
-    print("Значение номера экстремума должно быть больше нуля")
 else:
-    print(extr[k-1])
+    print("Не существует экстремума с таким номером")

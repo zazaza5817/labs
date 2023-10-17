@@ -1,14 +1,19 @@
 # 2a
-a = [1, 2, 3, 4, 5, 6, 7, 8]
-a.pop(3)
-print(a)
+a = list(map(int, input("Введите элементы списка через пробел: ").split()))
+index = int(input("Введите индекс: "))
+if 0 <= index < len(a):
+    a.pop(index)
+    print(a)
+else:
+    print("Индекс находится не в пределах списка")
 
 # 2b
-a = [1, 2, 3, 4, 5, 6, 7, 8]
-index = 3
-out = []
-for i in range(index):
-    out.append(a[i])
-for i in range(index+1, len(a)):
-    out.append(a[i])
-print(out)
+a = list(map(int, input("Введите элементы списка через пробел: ").split()))
+index = int(input("Введите индекс: "))
+if 0 <= index < len(a):
+    for i in range(index+1, len(a)):
+        a[i-1] = a[i]
+    a.pop(-1)
+    print(a)
+else:
+    print("Индекс находится не в пределах списка")
