@@ -8,7 +8,7 @@ longest = []
 
 def IsFib(n):
     a, b = 0, 1
-    for __ in range(n):
+    for _ in range(n):
         a, b = b, a + b
         if n == b:
           return True
