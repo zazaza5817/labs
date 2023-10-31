@@ -10,10 +10,10 @@ print(a)
 
 
 # Обработка
-numbers = list(map(str, range(10)))
-for i in range(len(a)):
-    for number in numbers:
-        a[i] = a[i].replace(number, " ")
+numbers = list(map(str, range(10)))  # Генерация всех цифр
+for i in range(len(a)):  # Проход по всем элементам списка
+    for number in numbers:  # Проход по всем цифрам
+        a[i] = a[i].replace(number, " ")  # Замена каждой цифры на пробел в текущем элементе
 
 
 # Вывод списка
