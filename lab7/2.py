@@ -12,7 +12,7 @@ negative_count = 0
 for i in a:
     if i < 0:
         negative_count += 1
-a.extend(["empty"]*negative_count)
+a.extend([0]*negative_count)
 write_index = elms_count + negative_count - 1
 read_index = elms_count - 1
 while read_index > 0:  # Проходимся по всем заданным пользователем элементам справа налево
