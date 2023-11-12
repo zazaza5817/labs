@@ -17,7 +17,7 @@ if n > 0:
             for number in string:
                 print(f"{number:^10.7g}", end="")
             print()
-        # Поворот на 90 по часовой стрелки
+        # Поворот на 90 по часовой стрелке квадратом
         for i in range(n // 2):
             for j in range(i, n - i - 1):
                 tmp = matrix[i][j]
@@ -31,7 +31,7 @@ if n > 0:
             for number in string:
                 print(f"{number:^10.7g}", end="")
             print()
-        # Поворот на 90 против часовой стрелки
+        # Поворот на 90 против часовой стрелке квадратом
         for i in range(n // 2):
             for j in range(i, n - i - 1):
                 tmp = matrix[i][j]
