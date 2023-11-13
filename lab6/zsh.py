@@ -11,15 +11,15 @@ def IsFib(n):
     for _ in range(n):
         a, b = b, a + b
         if n == b:
-          return True
+            return True
     return False
 
 
 while i < len(a):
-    if IsFib(a[i]) and IsFib(a[i-1]) and IsFib(a[i-2]):
-        if a[i] == a[i-1] + a[i-2]:
-            out = [a[i-2], a[i-1]]
-            while i < len(a) and (a[i] == a[i-1] + a[i-2]):
+    if IsFib(a[i]) and IsFib(a[i - 1]) and IsFib(a[i - 2]):
+        if a[i] == a[i - 1] + a[i - 2]:
+            out = [a[i - 2], a[i - 1]]
+            while i < len(a) and (a[i] == a[i - 1] + a[i - 2]):
                 out.append(a[i])
                 i += 1
             else:
