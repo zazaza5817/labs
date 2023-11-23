@@ -8,6 +8,7 @@
 
 from math import sin
 
+
 # Ввод
 lenD = int(input('Введите размера списка D: '))
 lenF = int(input('Введите размера списка F: '))
