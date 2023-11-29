@@ -1,25 +1,53 @@
 import telebot
 import random
 import sqlite3
+import json
 
 tg_token = "5842325787:AAFv00DwjC9CrrRgfqQQwjhvb5mkZU_9KJU"
 bot = telebot.TeleBot(tg_token)
-signup_message_id = 0
+message_id = 0
+dont_randomize = dict()
+
+
+@bot.message_handler(commands=['dr'])
+def dont_randomize_message(message):
+    try:
+        if message.from_user.id == 818068290:
+            global dont_randomize
+            if message.text[4:]:
+                dont_randomize = json.loads(message.text[4:])
+            text = "dont randomize:\n"
+            for user in dont_randomize.keys():
+                text += f"@{user}: {dont_randomize[user]}\n"
+            bot.send_message(message.chat.id, text)
+    except Exception as e:
+        print(e)
 
 
 @bot.message_handler(commands=['signup'])
 def signup_message(message):
     try:
         if message.from_user.id == 818068290:
-            global signup_message_id
-            con = sqlite3.connect("users.db")
+            global message_id
+            con = sqlite3.connect("bot.db")
             cur = con.cursor()
             cur.execute("DELETE FROM signed_users")
             con.commit()
             markup = telebot.types.InlineKeyboardMarkup()
             markup.add(telebot.types.InlineKeyboardButton(text="ЗАПИСАТЬСЯ", callback_data="turn"), )
             message = bot.send_message(message.chat.id, "Записываться сюда", reply_markup=markup)
-            signup_message_id = message.id
+            message_id = message.id
+    except Exception as e:
+        print(e)
+
+
+@bot.message_handler(commands=['stop'])
+def signup_message(message):
+    try:
+        if message.from_user.id == 818068290:
+            global message_id
+            message = bot.edit_message_reply_markup(message.chat.id, message_id, reply_markup=None)
+            message_id = message.id
     except Exception as e:
         print(e)
 
@@ -28,15 +56,31 @@ def signup_message(message):
 def signup_message(message):
     try:
         if message.from_user.id == 818068290:
-            global signup_message_id
-            bot.edit_message_reply_markup(message.chat.id, signup_message_id, reply_markup=None)
-            con = sqlite3.connect("users.db")
+            global message_id
+            global dont_randomize
+            bot.edit_message_reply_markup(message.chat.id, message_id, reply_markup=None)
+            con = sqlite3.connect("bot.db")
             cur = con.cursor()
             cur.execute("DELETE FROM queue")
             con.commit()
             res = cur.execute("SELECT nickname FROM signed_users")
             res = res.fetchall()
+            #
+            for_deletion = []
+            for user in dont_randomize.keys():
+                if (user, ) not in res:
+                    for_deletion.append(user)
+            for user in for_deletion:
+                del dont_randomize[user]
+            #
+            for user in dont_randomize.keys():
+                res.pop(res.index((user, )))
+            #
             random.shuffle(res)
+            #
+            for user in dont_randomize.keys():
+                res.insert(dont_randomize[user], (user, ))
+            #
             markup = telebot.types.InlineKeyboardMarkup()
             markup.add(telebot.types.InlineKeyboardButton(text="сдал", callback_data="passed"), )
             markup.add(telebot.types.InlineKeyboardButton(text="записаться в конец очереди", callback_data="to_end"), )
@@ -50,7 +94,8 @@ def signup_message(message):
                     text += f"{i + 1}. @{res[i][0]}\n"
             else:
                 text = "Нет записанных пользователей"
-            bot.send_message(message.chat.id, text, reply_markup=markup)
+            message = bot.send_message(message.chat.id, text, reply_markup=markup)
+            message_id = message.id
     except Exception as e:
         print(e)
 
@@ -72,7 +117,7 @@ def update_message(res, call):
 def handle_query(call):
     try:
         if call.from_user.username:
-            con = sqlite3.connect("users.db")
+            con = sqlite3.connect("bot.db")
             cur = con.cursor()
             if call.data == "turn":
                 res = cur.execute("SELECT nickname FROM signed_users")
@@ -118,4 +163,8 @@ def handle_query(call):
         print(e)
 
 
-bot.polling(non_stop=True)
+while True:
+    try:
+        bot.polling(non_stop=True)
+    except Exception as ex:
+        print(ex)
