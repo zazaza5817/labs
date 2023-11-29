@@ -10,7 +10,7 @@ def gnome_sort(array):
     swaps = 0
     # Запись времени начала сортировки
     start_time = time.time()
-    # Основной цикл сортировки
+    # Основной цикл сортировки 5 4 3 2 1
     while index < len(array):
         # Если текущий элемент больше или равен предыдущему, переходим к следующему элементу
         if index == 0 or array[index] >= array[index - 1]:
@@ -23,7 +23,7 @@ def gnome_sort(array):
     # Запись времени окончания сортировки
     end_time = time.time()
     # Возвращаем отсортированный массив и время, затраченное на сортировку
-    return array, end_time - start_time, swaps
+    return end_time - start_time, swaps
 
 
 # Основная функция программы
@@ -35,10 +35,10 @@ def main():
         print("Вводимые значения должны быть целыми числами")
         return 0
     # Сортировка введенного массива
-    sorted_a = gnome_sort(a)[0]
+    gnome_sort(a)
     # Вывод отсортированного массива
     print("Отсортированный массив: ")
-    for number in sorted_a:
+    for number in a:
         print(f"{number:.5g} ", end="")
     print()
     # Попытка ввода трех чисел (кол-ва элементов в списках для сортировки)
@@ -48,6 +48,9 @@ def main():
         n3 = int(input("n3 = "))
     except ValueError:
         print("Необходимо вводить целые числа")
+        return 0
+    if n1 < 0 or n2 < 0 or n3 < 0:
+        print("Размерности списков должны быть больше 0")
         return 0
     # Вывод шапки таблицы
     print("-" * 129)
@@ -61,9 +64,9 @@ def main():
     ordered_list_n1 = list(range(n1))
     ordered_list_n2 = list(range(n2))
     ordered_list_n3 = list(range(n3))
-    _, time_n1, swaps_n1 = gnome_sort(ordered_list_n1)
-    _, time_n2, swaps_n2 = gnome_sort(ordered_list_n2)
-    _, time_n3, swaps_n3 = gnome_sort(ordered_list_n3)
+    time_n1, swaps_n1 = gnome_sort(ordered_list_n1)
+    time_n2, swaps_n2 = gnome_sort(ordered_list_n2)
+    time_n3, swaps_n3 = gnome_sort(ordered_list_n3)
     print(f"|{'упорядоченный список':^31s}|{time_n1:^15.6g}|{swaps_n1:^15.6g}|{time_n2:^15.6g}|{swaps_n2:^15.6g}|"
           f"{time_n3:^15.6g}|{swaps_n3:^15.6g}|")
     print(f"|{'':-^31s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|")
@@ -72,9 +75,9 @@ def main():
     random_list_n1 = [randint(1, n1 * 10) for _ in range(n1)]
     random_list_n2 = [randint(1, n2 * 10) for _ in range(n2)]
     random_list_n3 = [randint(1, n3 * 10) for _ in range(n3)]
-    _, time_n1, swaps_n1 = gnome_sort(random_list_n1)
-    _, time_n2, swaps_n2 = gnome_sort(random_list_n2)
-    _, time_n3, swaps_n3 = gnome_sort(random_list_n3)
+    time_n1, swaps_n1 = gnome_sort(random_list_n1)
+    time_n2, swaps_n2 = gnome_sort(random_list_n2)
+    time_n3, swaps_n3 = gnome_sort(random_list_n3)
     print(f"|{'случайный список':^31s}|{time_n1:^15.6g}|{swaps_n1:^15.6g}|{time_n2:^15.6g}|{swaps_n2:^15.6g}|"
           f"{time_n3:^15.6g}|{swaps_n3:^15.6g}|")
     print(f"|{'':-^31s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|{'':-^15s}|")
@@ -83,9 +86,9 @@ def main():
     reversed_list_n1 = list(range(n1, 0, -1))
     reversed_list_n2 = list(range(n2, 0, -1))
     reversed_list_n3 = list(range(n3, 0, -1))
-    _, time_n1, swaps_n1 = gnome_sort(reversed_list_n1)
-    _, time_n2, swaps_n2 = gnome_sort(reversed_list_n2)
-    _, time_n3, swaps_n3 = gnome_sort(reversed_list_n3)
+    time_n1, swaps_n1 = gnome_sort(reversed_list_n1)
+    time_n2, swaps_n2 = gnome_sort(reversed_list_n2)
+    time_n3, swaps_n3 = gnome_sort(reversed_list_n3)
     print(f"|{'упорядоченный в обр. порядке':^31s}|{time_n1:^15.6g}|{swaps_n1:^15.6g}|{time_n2:^15.6g}|"
           f"{swaps_n2:^15.6g}|{time_n3:^15.6g}|{swaps_n3:^15.6g}|")
     print("-" * 129)
