@@ -36,6 +36,7 @@ def main():
             text = justify_width(text)
         print("\n".join(text))
         print("\n\n")
+        print("123")
 
 
 if __name__ == "__main__":
