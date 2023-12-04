@@ -5,7 +5,7 @@ def align_left(text):
    :return: Список строк текста, выровненных по левому краю.
    """
     # Удаляем пробелы слева от каждой строки
-    return [line.strip().lstrip() for line in text]
+    return [line.strip() for line in text]
 
 
 def align_right(text):
@@ -32,6 +32,39 @@ def align_center(text):
     return [f"{line.strip():^{max_length}s}" for line in text]
 
 
+def fill_center(text):
+    """
+    Выравнивает каждую строку в списке по центру и возвращает новый список.
+    :param text: Список строк, которые нужно выровнять по центру.
+    :return: Новый список строк, где каждая строка выровнена по центру.
+    """
+    # Находим максимальную длину строки в исходном тексте
+    max_length = max(len(line) for line in text)
+    # Создаем пустой список для хранения выровненных строк
+    out_text = []
+    # Проходимся по каждой строке в исходном тексте
+    for i in range(len(text)):
+        # Разбиваем строку на слова
+        string = text[i].split(" ")
+        # Вычисляем количество пробелов, которые нужно добавить после каждого слова
+        spaces_count = (max_length - len(text[i].replace(" ", ""))) // (len(string) - 1)
+        # Вычисляем остаток от деления количества пробелов на количество слов
+        spaces_remainder = (max_length - len(text[i].replace(" ", ""))) % (len(string) - 1)
+        # Создаем новую строку, добавляя к каждому слову необходимое количество пробелов
+        new_string = ""
+        for word in string:
+            new_string += word + " " * spaces_count
+            if spaces_remainder > 0:
+                new_string += " "
+                spaces_remainder -= 1
+        # Удаляем лишние пробелы с обоих концов строки
+        new_string.strip()
+        # Добавляем новую строку в список выровненных строк
+        out_text.append(new_string)
+    # Возвращаем список выровненных строк
+    return out_text
+
+
 def replace_word(text, old_word, new_word):
     """
     Заменяет все вхождения старого слова на новое в тексте.
@@ -41,11 +74,11 @@ def replace_word(text, old_word, new_word):
     :return: Список строк с замененными словами.
     """
     # Создаем список со всеми возможными вариантами старого слова с пробелами слева и справа
-    for old_str in [old_word + " ", " " + old_word]:
+    for char in [" ", ",", "."]:
         # Проходимся по каждой строке в тексте
         for i in range(len(text)):
             # Заменяем старое слово на новое
-            text[i] = text[i].replace(old_str, new_word)
+            text[i] = text[i].replace(f" {old_word}{char}", f" {new_word}{char}")
     # Возвращаем текст с замененными словами
     return text
 
@@ -65,17 +98,18 @@ def delete_word(text, word):
     return text
 
 
-def safe_input(type_func):
+def safe_input(type_func, prompt=""):
     """
     Бесконечный цикл для продолжения попыток ввода до тех пор, пока не будет введено корректное значение.
     :param type_func: Функция для преобразования ввода в определенный тип.
+    :param prompt: Выводимое приглашение ввода пользователя.
     :return: Преобразованное значение ввода.
     """
     # Бесконечный цикл для продолжения попыток ввода до тех пор, пока не будет введено корректное значение
     while True:
         try:
             # Получаем ввод пользователя
-            a = input()
+            a = input(prompt)
             # Преобразуем ввод в указанный тип
             a = type_func(a)
             # Возвращаем преобразованное значение
@@ -94,7 +128,6 @@ def display_text(text):
     print("\n".join(text))
 
 
-# Функция разделяет текст на части указанной длины
 def string_re_part(text, string_len):
     """
     Разбивает текст на строки заданной длины.
@@ -102,28 +135,20 @@ def string_re_part(text, string_len):
     :param string_len: Максимальная длина строки.
     :return: Список строк, где каждая строка имеет длину не более string_len.
     """
-    # Объединяем все строки текста в одну
-    string = " ".join(text)
-    # Разделяем текст на слова
-    string = string.split(" ")
-    # Создаем пустой список для хранения результата
-    text = []
-    i = 0
-    # Перебираем слова в тексте
-    while i < len(string):
-        # Создаем текущую строку
-        current_string = ""
-        # Добавляем слова в текущую строку до тех пор, пока их длина не превысит string_len
-        while i < len(string) and len(current_string + string[i]) < string_len:
-            current_string += string[i] + " "
-            i += 1
-        # Добавляем текущую строку в результат
-        text.append(current_string)
-    # Возвращаем результат
-    return text
+    # Создаем новый список строк, в который будем добавлять строки длиной не более string_len
+    new_text = ['']
+    # Проходим по каждому элементу в тексте
+    for token in iterate_text(text, False):
+        # Если добавление следующего токена приведет к превышению максимальной длины строки,
+        # то добавляем новую строку в new_text
+        if len(new_text[-1] + token) > string_len:
+            new_text.append('')
+        # Добавляем текущий токен и пробел к последней строке в new_text
+        new_text[-1] += token + " "
+    # Возвращаем новый список строк
+    return new_text
 
 
-# Определяем функцию, которая заменяет арифметические операции в строке
 def replace_arithmetic_operations(s):
     """
     Заменяет арифметические операции в строке.
@@ -249,7 +274,75 @@ def delete_sentence(text):
     :param: Входной текст состоящий из списка строк.
     :return: Текст без предложения с наименьшим количеством строк.
     """
+    # Инициализируем список предложений с пустым предложением
+    sentences = [[]]
+
+    # Итерируем по тексту, добавляем каждый токен в текущее предложение
+    for token in iterate_text(text, True):
+        sentences[-1].append(token)
+        # Если токен является концом предложения, начинаем новое предложение
+        if token[-1] == ".":
+            sentences.append([])
+
+    # Ищем предложение с наименьшим количеством слов
+    min_len = len(sentences[0])
+    min_sentence_i = 0
+    for i in range(1, len(sentences)):
+        if len(sentences[i]) < min_len:
+            min_len = len(sentences[i])
+            min_sentence_i = i
+
+    # Собираем предложение для удаления, проверяем на наличие символа новой строки
+    contains_newline = False
+    sentence_for_remove = ""
+    for token in sentences[min_sentence_i]:
+        if "\n" in token:
+            token = token.replace("\n", "")
+            contains_newline = True
+        sentence_for_remove += token + " "
+
+    # Выводим предложение для удаления
+    print(f"Наименьшее по длине предложение: {sentence_for_remove}")
+
+    # Если в предложении был символ новой строки, заменяем его на "\n"
+    if contains_newline:
+        sentences[min_sentence_i] = "\n"
+    else:
+        # Если не было символа новой строки, удаляем предложение
+        sentences.pop(min_sentence_i)
+
+    # Формируем итоговый текст
+    text = [""]
+    for sentence in sentences:
+        for word in sentence:
+            text[-1] += word + " "
+            # Если слово содержит символ новой строки, начинаем новое предложение
+            if "\n" in word:
+                text[-1] = text[-1][:-2]
+                text.append("")
+
     return text
+
+
+def iterate_text(text, needs_newline):
+    """
+    Функция для итерации по тексту и выдачи каждого слова (токен) по отдельности.
+    :param: Список строк текста.
+    :yield token: Слово из текста.
+    """
+    print(text)
+    # Проходимся по каждой строке в тексте
+    print(len(text))
+    for string in text:
+        # Добавляем символ новой строки в конец строки, если необходимо
+        if needs_newline:
+            string += "\n"
+        # Разбиваем строку на слова
+        string = string.split(" ")
+        # Проходимся по каждому слову в списке слов
+        for token in string:
+            # Выдаем слово
+            yield token
 
 
 def main():
@@ -258,7 +351,7 @@ def main():
         "— Потрудитесь мне сказать что-нибудь о Крестовом походе Людовика Святого, — сказал он,",
         "покачиваясь на стуле и задумчиво глядя себе под ноги. — Сначала вы мне скажете о причинах,",
         "побудивших короля французского взять крест, — сказал он, поднимая брови и указывая пальцем на",
-        "чернильницу, — потом объясните мне общие характеристические черты этого похода, — прибавил он,",
+        "чернильницу, — потом объясните мне. общие характеристические черты этого похода, — прибавил он,",
         "делая всей кистью движение такое, как будто хотел поймать что-нибудь, — и, наконец, влияние",
         "этого похода на европейские государства вообще, — сказал он, ударяя тетрадями по левой стороне",
         "стола, — и на французское королевство в особенности, — заключил он, ударяя по правой стороне",
@@ -279,25 +372,26 @@ def main():
         # Выводим меню
         print("1. Выровнять текст по левому краю.\n"
               "2. Выровнять текст по правому краю.\n"
-              "3. Выровнять текст по ширине.\n"
+              "3. Заполнить текстом по ширине.\n"
               "4. Удалить слово\n"
               "5. Заменить все вхождения заданного слова на другое: \n"
               "6. Заменить все арифметические операции сложения и вычитания на их результат\n"
               "7. Удалить самое короткое по количеству слов предложение\n"
               "8. Заменить текст на исходный\n"
-              "9. Переразбить текст на строки")
+              "9. Переразбить текст на строки\n"
+              "10. Выровнять текст по центру")
 
         # Получаем ввод пользователя
-        n = safe_input(int)
+        n = safe_input(int, "Выберите элемент меню: ")
 
         # Выполняем действия в зависимости от ввода пользователя
-        if 0 < n < 100:
+        if 0 < n < 11:
             if n == 1:
                 text = align_left(text)
             elif n == 2:
                 text = align_right(text)
             elif n == 3:
-                text = align_center(text)
+                text = fill_center(text)
             elif n == 4:
                 for_remove = input("Введите слово для удаления: ")
                 text = delete_word(text, for_remove)
@@ -308,11 +402,13 @@ def main():
             elif n == 6:
                 text = replace_arithmetic_operations(text)
             elif n == 7:
-                text = 1
+                text = delete_sentence(text)
             elif n == 8:
                 text = text_copy.copy()
             elif n == 9:
                 text = string_re_part(text, string_len)
+            elif n == 10:
+                text = align_center(text)
             # Отображаем измененный текст
             display_text(text)
         else:
