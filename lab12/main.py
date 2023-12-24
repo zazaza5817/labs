@@ -4,6 +4,9 @@ def align_left(text):
    :param text: Список строк текста.
    :return: Список строк текста, выровненных по левому краю.
    """
+    for i in range(len(text)):
+        while "  " in text[i]:
+            text[i] = text[i].replace("  ", " ")
     # Удаляем пробелы слева от каждой строки
     return [line.strip() for line in text]
 
@@ -14,10 +17,15 @@ def align_right(text):
     :param text: Список строк текста.
     :return: Список строк текста, выровненных по правому краю.
     """
+    for i in range(len(text)):
+        while "  " in text[i]:
+            text[i] = text[i].replace("  ", " ")
     # Находим максимальную длину строки
-    max_length = max(len(line) for line in text)
+    max_length = max(len(line.strip()) for line in text)
     # Выравниваем каждую строку по правому краю
-    return [line.strip().rjust(max_length) for line in text]
+    text = [line.strip().rjust(max_length) for line in text]
+    return text
+
 
 
 def align_center(text):
@@ -26,6 +34,9 @@ def align_center(text):
     :param text: Список строк, которые нужно выровнять по центру.
     :return: Новый список строк, где каждая строка выровнена по центру.
     """
+    for i in range(len(text)):
+        while "  " in text[i]:
+            text[i] = text[i].replace("  ", " ")
     # Находим максимальную длину строки в списке
     max_length = max(len(line) for line in text)
     # Возвращаем новый список, где каждая строка выровнена по центру
@@ -38,6 +49,9 @@ def fill_center(text):
     :param text: Список строк, которые нужно выровнять по центру.
     :return: Новый список строк, где каждая строка выровнена по центру.
     """
+    for i in range(len(text)):
+        while "  " in text[i]:
+            text[i] = text[i].replace("  ", " ")
     # Находим максимальную длину строки в исходном тексте
     max_length = max(len(line) for line in text)
     # Создаем пустой список для хранения выровненных строк
@@ -45,9 +59,12 @@ def fill_center(text):
     # Проходимся по каждой строке в исходном тексте
     for i in range(len(text)):
         # Разбиваем строку на слова
-        string = text[i].split(" ")
+        string = text[i].strip().split(" ")
         # Вычисляем количество пробелов, которые нужно добавить после каждого слова
-        spaces_count = (max_length - len(text[i].replace(" ", ""))) // (len(string) - 1)
+        try:
+            spaces_count = (max_length - len(text[i].replace(" ", ""))) // (len(string) - 1)
+        except ZeroDivisionError:
+            return text
         # Вычисляем остаток от деления количества пробелов на количество слов
         spaces_remainder = (max_length - len(text[i].replace(" ", ""))) % (len(string) - 1)
         # Создаем новую строку, добавляя к каждому слову необходимое количество пробелов
@@ -274,54 +291,35 @@ def delete_sentence(text):
     :param: Входной текст состоящий из списка строк.
     :return: Текст без предложения с наименьшим количеством строк.
     """
-    # Инициализируем список предложений с пустым предложением
-    sentences = [[]]
-
-    # Итерируем по тексту, добавляем каждый токен в текущее предложение
-    for token in iterate_text(text, True):
-        sentences[-1].append(token)
-        # Если токен является концом предложения, начинаем новое предложение
-        if token[-1] == ".":
-            sentences.append([])
-
-    # Ищем предложение с наименьшим количеством слов
-    min_len = len(sentences[0])
-    min_sentence_i = 0
-    for i in range(1, len(sentences)):
-        if len(sentences[i]) < min_len:
-            min_len = len(sentences[i])
-            min_sentence_i = i
-
-    # Собираем предложение для удаления, проверяем на наличие символа новой строки
-    contains_newline = False
-    sentence_for_remove = ""
-    for token in sentences[min_sentence_i]:
-        if "\n" in token:
-            token = token.replace("\n", "")
-            contains_newline = True
-        sentence_for_remove += token + " "
-
-    # Выводим предложение для удаления
-    print(f"Наименьшее по длине предложение: {sentence_for_remove}")
-
-    # Если в предложении был символ новой строки, заменяем его на "\n"
-    if contains_newline:
-        sentences[min_sentence_i] = "\n"
-    else:
-        # Если не было символа новой строки, удаляем предложение
-        sentences.pop(min_sentence_i)
-
-    # Формируем итоговый текст
+    sentences = [""]
+    for line in text:
+        for char in line:
+            sentences[-1] += char
+            if char == ".":
+                sentences.append("")
+        sentences[-1] += " /"
+    sentences = [str(sentence).strip() for sentence in sentences]
+    sentences.pop(-1)
+    if not sentences:
+        print("В тексте нет предложений")
+        return text
+    shortest_sentence = str(min(sentences, key=lambda x: len(x.split())))
+    if "/" in shortest_sentence and sentences.index(shortest_sentence) > 0:
+        sentences[sentences.index(shortest_sentence)-1] += " /"
+    sentences.remove(shortest_sentence)
+    print("============Самое короткое предложение:")
+    print(shortest_sentence.replace("/", ""))
+    print("============")
     text = [""]
     for sentence in sentences:
-        for word in sentence:
-            text[-1] += word + " "
-            # Если слово содержит символ новой строки, начинаем новое предложение
-            if "\n" in word:
-                text[-1] = text[-1][:-2]
+        for char in sentence:
+            if char == "/":
                 text.append("")
-
+            else:
+                text[-1] += char
+        text[-1] += " "
     return text
+
 
 
 def iterate_text(text, needs_newline):
@@ -330,9 +328,7 @@ def iterate_text(text, needs_newline):
     :param: Список строк текста.
     :yield token: Слово из текста.
     """
-    print(text)
     # Проходимся по каждой строке в тексте
-    print(len(text))
     for string in text:
         # Добавляем символ новой строки в конец строки, если необходимо
         if needs_newline:
@@ -357,7 +353,6 @@ def main():
         "стола, — и на французское королевство в особенности, — заключил он, ударяя по правой стороне",
         "стола и склоняя голову направо."
     ]
-
     # Создаем копию исходного текста
     text_copy = text.copy()
 
