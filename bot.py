@@ -3,10 +3,12 @@ import random
 import sqlite3
 import json
 
+
 tg_token = "5842325787:AAFv00DwjC9CrrRgfqQQwjhvb5mkZU_9KJU"
 bot = telebot.TeleBot(tg_token)
 message_id = 0
 dont_randomize = dict()
+thread_id = 2611
 
 
 @bot.message_handler(commands=['dr'])
@@ -58,7 +60,8 @@ def signup_message(message):
         con.commit()
         markup = telebot.types.InlineKeyboardMarkup()
         markup.add(telebot.types.InlineKeyboardButton(text="ЗАПИСАТЬСЯ", callback_data="turn"), )
-        message = bot.send_message(message.chat.id, "Записываться сюда", reply_markup=markup)
+        message = bot.send_message(message.chat.id, "Записываться сюда", reply_markup=markup,
+                                   message_thread_id=thread_id)
         message_id = message.id
 
 
@@ -104,7 +107,7 @@ def signup_message(message):
                 text += f"{i + 1}. {get_name(res[i][0])}\n"
         else:
             text = "Нет записанных пользователей"
-        message = bot.send_message(message.chat.id, text, reply_markup=markup)
+        message = bot.send_message(message.chat.id, text, reply_markup=markup, message_thread_id=thread_id)
         message_id = message.id
 
 
